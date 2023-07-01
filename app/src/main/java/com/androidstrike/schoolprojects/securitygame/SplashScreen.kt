@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.androidstrike.schoolprojects.securitygame.databinding.FragmentSplashScreenBinding
+import com.androidstrike.schoolprojects.securitygame.utils.Common.auth
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -32,8 +33,24 @@ class SplashScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        with(binding) {
+            txtSplash.animate().setDuration(2000).alpha(1f).withEndAction {
+
+
+                if (auth.currentUser != null) {
+                    // User is logged in
+                    // Perform necessary actions
+                    val navToHome = SplashScreenDirections.actionSplashScreenToHome2()
+                    findNavController().navigate(navToHome)
+                } else {
+                    // User is not logged in
+                    // Redirect to login screen or perform other actions
+                    val navToSignIn = SplashScreenDirections.actionSplashScreenToSignIn()
+                    findNavController().navigate(navToSignIn)
+                }
+
+
+            }
         }
     }
 

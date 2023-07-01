@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".features.home.Home">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/home_custom_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:layout_margin="@dimen/padding_mini"
+        app:menu="@menu/menu_main"
+        app:title="@string/app_name"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/card_security_banner"
+        android:layout_below="@id/home_custom_tool_bar">
+
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/security_tips_banner" />
+
+
+    </FrameLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_mini"
+        app:strokeColor="@android:color/transparent"
+        android:layout_below="@id/card_security_banner"
+        app:cardElevation="@dimen/padding_mini"
+        android:padding="@dimen/padding_mini">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_mini">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_margin="@dimen/margin_mini"
+                android:text="@string/secure_guard_quiz"
+                android:textSize="@dimen/text_l"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/choose_difficulty"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="9"
+                android:layout_margin="@dimen/margin_mini"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_mini">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_margin="@dimen/padding_mini"
+                    app:cardElevation="@dimen/padding_mini">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_mini">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/easy"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/text_l"
+                            android:padding="@dimen/padding_mini"
+                            android:id="@+id/txt_easy_title"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/margin_mini"
+                            android:weightSum="3"
+                            android:id="@+id/layout_easy_high_score"
+                            android:padding="@dimen/padding_mini"
+                            android:layout_below="@+id/txt_easy_title">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="@string/high_score"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                tools:text="10"
+                                />
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/margin_mini"
+                            android:layout_marginBottom="@dimen/margin_mini"
+                            android:weightSum="3"
+                            android:id="@+id/layout_easy_leaderboard_rank"
+                            android:padding="@dimen/padding_mini"
+                            android:layout_below="@+id/layout_easy_high_score">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="@string/leaderboard_rank"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                tools:text="1"
+                                />
+
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:padding="@dimen/padding_mini"
+                    android:layout_margin="@dimen/padding_mini"
+                    app:cardElevation="@dimen/padding_mini">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_mini">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/medium"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/text_l"
+                            android:padding="@dimen/padding_mini"
+                            android:id="@+id/txt_medium_title"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/margin_mini"
+                            android:weightSum="3"
+                            android:padding="@dimen/padding_mini"
+                            android:id="@+id/layout_medium_high_score"
+                            android:layout_below="@+id/txt_medium_title">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="@string/high_score"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                tools:text="10"
+                                />
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/margin_mini"
+                            android:layout_marginBottom="@dimen/margin_mini"
+                            android:weightSum="3"
+                            android:padding="@dimen/padding_mini"
+                            android:id="@+id/layout_medium_leaderboard_rank"
+                            android:layout_below="@+id/layout_medium_high_score">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="@string/leaderboard_rank"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                tools:text="1"
+                                />
+
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_margin="@dimen/padding_mini"
+                    app:cardElevation="@dimen/padding_mini">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_mini">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hard"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/text_l"
+                            android:padding="@dimen/padding_mini"
+                            android:id="@+id/txt_hard_title"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/margin_mini"
+                            android:weightSum="3"
+                            android:id="@+id/layout_hard_high_score"
+                            android:padding="@dimen/padding_mini"
+                            android:layout_below="@+id/txt_hard_title">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="@string/high_score"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                tools:text="10"
+                                />
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="@dimen/margin_mini"
+                            android:layout_marginBottom="@dimen/margin_mini"
+                            android:weightSum="3"
+                            android:id="@+id/layout_hard_leaderboard_rank"
+                            android:padding="@dimen/padding_mini"
+                            android:layout_below="@+id/layout_hard_high_score">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="@string/leaderboard_rank"/>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                tools:text="1"
+                                />
+
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="@dimen/button_width_xxl"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:cornerRadius="@dimen/margin_mini"
+                android:layout_margin="@dimen/margin_mini"
+                android:text="@string/home_random_difficulty_btn"
+                android:id="@+id/home_random_difficulty_btn"/>
+
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

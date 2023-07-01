@@ -3,26 +3,70 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/SplashScreen">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/SplashScreen"
         android:name="com.androidstrike.schoolprojects.securitygame.SplashScreen"
-        android:label="@string/first_fragment_label"
+        android:label="@string/splash_screen_fragment_label"
         tools:layout="@layout/fragment_splash_screen">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_SplashScreen_to_SignIn"
+            app:destination="@id/SignIn" />
+        <action
+            android:id="@+id/action_SplashScreen_to_home2"
+            app:destination="@id/home2" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.androidstrike.schoolprojects.securitygame.SignIn"
-        android:label="@string/second_fragment_label"
+        android:id="@+id/SignIn"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.auth.SignIn"
+        android:label="@string/sign_in_fragment_label"
         tools:layout="@layout/fragment_sign_in">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_SignIn_to_signUp"
+            app:destination="@id/signUp" />
+        <action
+            android:id="@+id/action_SignIn_to_resetPassword"
+            app:destination="@id/resetPassword" />
+        <action
+            android:id="@+id/action_SignIn_to_phoneVerification"
+            app:destination="@id/phoneVerification" />
     </fragment>
+    <fragment
+        android:id="@+id/signUp"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.auth.SignUp"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUp_to_SignIn"
+            app:destination="@id/SignIn" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetPassword"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.auth.ResetPassword"
+        android:label="fragment_reset_password"
+        tools:layout="@layout/fragment_reset_password" >
+        <action
+            android:id="@+id/action_resetPassword_to_SignIn"
+            app:destination="@id/SignIn" />
+    </fragment>
+    <fragment
+        android:id="@+id/phoneVerification"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.auth.PhoneVerification"
+        android:label="fragment_phone_verification"
+        tools:layout="@layout/fragment_phone_verification" >
+        <argument
+            android:name="phoneNumber"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_phoneVerification_to_home2"
+            app:destination="@id/home2" />
+    </fragment>
+    <fragment
+        android:id="@+id/home2"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.home.Home"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
 </navigation>
