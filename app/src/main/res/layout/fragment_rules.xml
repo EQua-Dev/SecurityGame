@@ -10,11 +10,14 @@
         android:id="@+id/txt_quiz_category_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_mini"
+        android:layout_marginStart="@dimen/margin_mini"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_marginEnd="@dimen/margin_mini"
+        android:layout_marginBottom="@dimen/margin_mini"
         android:padding="@dimen/padding_mini"
         android:textAlignment="center"
         android:textSize="@dimen/text_l"
-        tools:text="Easy Quiz" />
+        tools:text="@string/quiz_category_title" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,19 +33,19 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="@dimen/padding_mini"
-            android:weightSum="3">
+            android:weightSum="5">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="@string/last_played" />
 
             <TextView
                 android:id="@+id/last_played_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 tools:text="@tools:sample/date/ddmmyy" />
 
         </LinearLayout>
@@ -52,20 +55,20 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="@dimen/padding_mini"
-            android:weightSum="3">
+            android:weightSum="5">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="@string/last_score" />
 
             <TextView
                 android:id="@+id/last_played_score"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="14 Points" />
+                android:layout_weight="3"
+                tools:text="@string/game_score" />
 
         </LinearLayout>
 
@@ -74,20 +77,42 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="@dimen/padding_mini"
-            android:weightSum="3">
+            android:weightSum="5">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="@string/high_score" />
 
             <TextView
                 android:id="@+id/high_score"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="24 Points" />
+                android:layout_weight="3"
+                tools:text="@string/game_score" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_mini"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/last_location" />
+
+            <TextView
+                android:id="@+id/last_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                tools:text="@tools:sample/cities" />
 
         </LinearLayout>
 
@@ -99,7 +124,7 @@
         android:layout_margin="@dimen/margin_mini"
         android:padding="@dimen/padding_mini"
         android:id="@+id/card_rules"
-        android:layout_below="@+id/game_stats_layout"
+        android:layout_centerInParent="true"
         app:cardElevation="@dimen/padding_mini">
 
         <LinearLayout
@@ -132,14 +157,17 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/start_quiz_btn"
         android:layout_width="@dimen/button_width_xxl"
         android:layout_height="wrap_content"
         android:layout_below="@id/card_rules"
         android:layout_centerHorizontal="true"
-        app:cornerRadius="@dimen/margin_mini"
-        android:layout_margin="@dimen/margin_mini"
+        android:layout_marginStart="@dimen/margin_mini"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_marginEnd="@dimen/margin_mini"
+        android:layout_marginBottom="@dimen/margin_mini"
         android:padding="@dimen/padding_mini"
-        android:id="@+id/start_quiz"
-        android:text="@string/start_quiz"/>
+        android:text="@string/start_quiz"
+        app:cornerRadius="@dimen/margin_mini" />
 
 </RelativeLayout>

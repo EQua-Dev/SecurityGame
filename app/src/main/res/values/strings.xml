@@ -52,4 +52,28 @@
     <string name="last_score">Last Score: </string>
     <string name="rules">Rules</string>
     <string name="start_quiz">Start Quiz</string>
+    <string name="quiz_category_title">%s Quiz</string>
+    <string name="game_score">%s Points</string>
+    <string name="quit_quiz">Quit</string>
+    <string name="pass_quiz_question">Pass</string>
+    <string name="info">i</string>
+    <string name="quiz_score">Score: </string>
+    <string name="quiz_question_number">%s / %s</string>
+    <string name="correct">Correct</string>
+    <string name="seconds_count_down">%ss</string>
+    <string name="question_time_up">Time Up!</string>
+    <string name="quiz_over">Quiz Over</string>
+    <string name="attempted_questions">Questions: </string>
+    <string name="correct_questions">Correct: </string>
+    <string name="text_attempted_questions">%s / %s</string>
+    <string name="replay">Replay</string>
+    <string name="done">Done</string>
+    <string name="last_location">Last Location Played:</string>
+    <string name="nil">N/A</string>
+
+    <string-array name="difficulties">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
 </resources>

@@ -73,6 +73,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
+                    android:id="@+id/home_card_easy"
                     android:layout_margin="@dimen/padding_mini"
                     app:cardElevation="@dimen/padding_mini">
 
@@ -111,6 +112,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 tools:text="10"
+                                android:id="@+id/easy_high_score"
                                 />
 
                         </LinearLayout>
@@ -136,6 +138,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 tools:text="1"
+                                android:id="@+id/easy_leader_board"
                                 />
 
                         </LinearLayout>
@@ -149,6 +152,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
+                    android:id="@+id/home_card_medium"
                     android:padding="@dimen/padding_mini"
                     android:layout_margin="@dimen/padding_mini"
                     app:cardElevation="@dimen/padding_mini">
@@ -188,6 +192,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 tools:text="10"
+                                android:id="@+id/medium_high_score"
                                 />
 
                         </LinearLayout>
@@ -213,6 +218,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 tools:text="1"
+                                android:id="@+id/medium_leader_board"
                                 />
 
                         </LinearLayout>
@@ -226,6 +232,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
+                    android:id="@+id/home_card_hard"
                     android:layout_margin="@dimen/padding_mini"
                     app:cardElevation="@dimen/padding_mini">
 
@@ -264,6 +271,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 tools:text="10"
+                                android:id="@+id/hard_high_score"
                                 />
 
                         </LinearLayout>
@@ -289,6 +297,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 tools:text="1"
+                                android:id="@+id/hard_leader_board"
                                 />
 
                         </LinearLayout>

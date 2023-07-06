@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/primary"
+    tools:context=".features.quiz.QuizDone">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quiz_over"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:layout_margin="@dimen/margin_mini"
+        android:padding="@dimen/padding_mini"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_xl"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/card_stats"
+        app:strokeColor="@android:color/transparent"
+        app:cardBackgroundColor="@color/primary"
+        android:padding="@dimen/padding_mini"
+        android:layout_margin="@dimen/margin_mini"
+        app:cardElevation="@dimen/padding_minute">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/padding_mini"
+                android:padding="@dimen/padding_mini"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:text="@string/attempted_questions"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:id="@+id/text_attempted_questions"
+                    android:text="@string/text_attempted_questions"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/padding_mini"
+                android:padding="@dimen/padding_mini"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:text="@string/correct_questions"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:id="@+id/text_correct_questions"
+                    tools:text="4"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/padding_mini"
+                android:padding="@dimen/padding_mini"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:text="@string/quiz_score"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:id="@+id/game_score"
+                    android:text="@string/game_score"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/padding_mini"
+                android:padding="@dimen/padding_mini"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:text="@string/high_score"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:id="@+id/high_score"
+
+                    android:padding="@dimen/padding_mini"
+                    android:text="@string/game_score"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/padding_mini"
+                android:padding="@dimen/padding_mini"
+                android:weightSum="2">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:text="@string/leaderboard_rank"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="@dimen/padding_mini"
+                    android:id="@+id/text_leader_board_rank"
+                    android:text="@string/text_attempted_questions"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_margin="@dimen/margin_mini"
+        android:padding="@dimen/padding_mini"
+        android:layout_below="@id/card_stats"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/replay"
+            app:cornerRadius="@dimen/margin_mini"
+            app:strokeColor="@color/white"
+            app:strokeWidth="@dimen/padding_mini"
+            app:elevation="@dimen/padding_mini"
+            android:layout_margin="@dimen/padding_mini"
+            android:id="@+id/quiz_done_retry"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/done"
+            app:cornerRadius="@dimen/margin_mini"
+            app:strokeColor="@color/white"
+            app:strokeWidth="@dimen/padding_mini"
+            app:elevation="@dimen/padding_mini"
+            android:layout_margin="@dimen/padding_mini"
+            android:id="@+id/quiz_done_btn"/>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

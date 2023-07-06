@@ -68,5 +68,60 @@
         android:id="@+id/home2"
         android:name="com.androidstrike.schoolprojects.securitygame.features.home.Home"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home2_to_rules"
+            app:destination="@id/rules" />
+    </fragment>
+    <fragment
+        android:id="@+id/rules"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.quiz.Rules"
+        android:label="fragment_rules"
+        tools:layout="@layout/fragment_rules" >
+        <argument
+            android:name="difficulty"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_rules_to_quizFragment"
+            app:destination="@id/quizFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.quiz.QuizFragment"
+        android:label="fragment_quiz"
+        tools:layout="@layout/fragment_quiz" >
+        <argument
+            android:name="difficulty"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_quizFragment_to_quizDone"
+            app:destination="@id/quizDone" />
+    </fragment>
+    <fragment
+        android:id="@+id/quizDone"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.quiz.QuizDone"
+        android:label="fragment_quiz_done"
+        tools:layout="@layout/fragment_quiz_done" >
+        <argument
+            android:name="totalQuestions"
+            app:argType="string" />
+        <argument
+            android:name="answeredQuestions"
+            app:argType="string" />
+        <argument
+            android:name="score"
+            app:argType="string" />
+        <argument
+            android:name="difficulty"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_quizDone_to_rules"
+            app:destination="@id/rules" />
+        <action
+            android:id="@+id/action_quizDone_to_home2"
+            app:destination="@id/home2" />
+        <argument
+            android:name="correctAnswers"
+            app:argType="string" />
+    </fragment>
 </navigation>
