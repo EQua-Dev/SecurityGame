@@ -70,6 +70,8 @@
     <string name="done">Done</string>
     <string name="last_location">Last Location Played:</string>
     <string name="nil">N/A</string>
+    <string name="play_easy_first">Complete Easy Mode First</string>
+    <string name="play_medium_first">Complete Medium Mode First</string>
 
     <string-array name="difficulties">
         <item>Easy</item>

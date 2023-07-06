@@ -73,7 +73,7 @@ class Rules : Fragment() {
                 resources.getString(R.string.quiz_category_title, difficulty)
 
             startQuizBtn.setOnClickListener {
-                 val navToQuiz = RulesDirections.actionRulesToQuizFragment(difficulty)
+                val navToQuiz = RulesDirections.actionRulesToQuizFragment(difficulty)
                 findNavController().navigate(navToQuiz)
             }
 
@@ -87,7 +87,8 @@ class Rules : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             //userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
             Log.d(TAG, "getUserGameDetails: $difficulty")
-            userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2").collection(GAME_DETAILS_REF).document("$difficulty")
+            userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2").collection(GAME_DETAILS_REF)
+                .document("$difficulty")
                 //.document(difficulty)// whereEqualTo("employerBusiness", loggedInManager.employerBusiness)
                 .get()
                 .addOnSuccessListener { document: DocumentSnapshot ->
@@ -104,15 +105,25 @@ class Rules : Fragment() {
 
     private fun populateGameDetails() {
 
-        with(binding){
-            lastPlayedScore.text = resources.getString(R.string.game_score, userGameDetails.lastScore)
-            highScore.text = resources.getString(R.string.game_score, userGameDetails.highScore)
-            lastPlayedDate.text = if (userGameDetails.lastPlayed.isEmpty()){
+        with(binding) {
+            lastPlayedScore.text = if (userGameDetails.lastScore.isEmpty()) {
                 resources.getString(R.string.nil)
-            }else{
+            } else {
+                resources.getString(R.string.game_score, userGameDetails.lastScore)
+            }
+            highScore.text = if (userGameDetails.highScore.isEmpty()) {
+                resources.getString(R.string.nil)
+            } else {
+                resources.getString(R.string.game_score, userGameDetails.highScore)
+            }
+            lastPlayedDate.text = if (userGameDetails.lastPlayed.isEmpty()) {
+                resources.getString(R.string.nil)
+            } else {
                 getDate(userGameDetails.lastPlayed.toLong(), FULL_DATE_FORMAT)
             }
-            lastLocation.text = userGameDetails.lastLocationPlayed
+            lastLocation.text = userGameDetails.lastLocationPlayed.ifEmpty {
+                resources.getString(R.string.nil)
+            }
         }
 
         populateGameRules()
@@ -130,7 +141,7 @@ class Rules : Fragment() {
                     gameRulesAdapter = QuizRulesAdapter(item!!.rules)
 
                     Log.d(TAG, "populateGameRules: ${item.rules}")
-                    
+
                     binding.rvRules.adapter = gameRulesAdapter
 
                 }
