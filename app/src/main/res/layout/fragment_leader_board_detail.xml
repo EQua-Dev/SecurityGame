@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/margin_mini">
+
+    <LinearLayout
+        android:id="@+id/leader_board_detail_headers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_mini"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:padding="@dimen/padding_mini"
+            android:text="@string/rank"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:padding="@dimen/padding_mini"
+            android:text="@string/username"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:padding="@dimen/padding_mini"
+            android:text="@string/score"
+            android:textAlignment="center" />
+
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_leader_board"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/leader_board_detail_headers"
+        android:clipToPadding="false"
+        android:padding="@dimen/padding_mini"
+        tools:listitem="@layout/item_leader_board_layout" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_play_quiz"
+        android:layout_width="@dimen/button_width_xxl"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin_mini"
+        android:padding="@dimen/padding_mini"
+        android:text="@string/play_quiz"
+        app:cornerRadius="@dimen/margin_mini" />
+
+</RelativeLayout>

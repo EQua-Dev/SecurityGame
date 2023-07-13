@@ -27,7 +27,10 @@ import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_L
 import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_LAST_LOCATION_PLAYED
 import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_LAST_PLAYED
 import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_LAST_SCORE
+import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_REF
+import com.androidstrike.schoolprojects.securitygame.utils.Common.auth
 import com.androidstrike.schoolprojects.securitygame.utils.Common.leaderBoardCollectionRef
+import com.androidstrike.schoolprojects.securitygame.utils.Common.userCollectionRef
 import com.androidstrike.schoolprojects.securitygame.utils.enable
 import com.androidstrike.schoolprojects.securitygame.utils.showProgressDialog
 import com.androidstrike.schoolprojects.securitygame.utils.toast
@@ -42,6 +45,7 @@ import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import kotlin.properties.Delegates
 
@@ -57,6 +61,8 @@ class QuizDone : Fragment() {
     private lateinit var answeredAnswers: String
     private lateinit var totalQuestions: String
     private lateinit var correctAnswered: String
+
+    private var localHighScore = 0
 
     private var progressDialog: Dialog? = null
 
@@ -148,23 +154,29 @@ class QuizDone : Fragment() {
                     val orderedScores = scores.sortedDescending()
                     val currentScoreRank = orderedScores.indexOf(userScore) + 1
 
-                    //get the current score of the user on the leaderboard
-                    for (rank in mLeaderBoardMap) {
-                        if (rank.key == user) {
-                            if (rank.value < userScore) {
-                                mLeaderBoardMap[user] = userScore
-                                Log.d(TAG, "getLeaderboard: yes$rank")
-                                orderedLeaderBoardMap =
-                                    mLeaderBoardMap
-                            } else {
-                                Log.d(TAG, "getLeaderboard: no$rank")
-                                Log.d(TAG, "getLeaderboard: no$mLeaderBoardMap")
-                                orderedLeaderBoardMap =
-                                    mLeaderBoardMap
+                    if (mLeaderBoardMap.keys.contains(user)) { //if user is already on leaderboard
+                        for (rank in mLeaderBoardMap) {
+                            if (rank.key == user) {
+                                if (rank.value < userScore) {
+                                    mLeaderBoardMap[user] = userScore
+                                    Log.d(TAG, "getLeaderboard: yes$rank")
+                                    orderedLeaderBoardMap =
+                                        mLeaderBoardMap
+                                } else {
+                                    Log.d(TAG, "getLeaderboard: no$rank")
+                                    Log.d(TAG, "getLeaderboard: no$mLeaderBoardMap")
 
+                                    orderedLeaderBoardMap =
+                                        mLeaderBoardMap
+
+                                }
                             }
                         }
+                    } else {
+                        mLeaderBoardMap[user] = userScore
+                        orderedLeaderBoardMap = mLeaderBoardMap
                     }
+
                     //check if the current score is higher than the score on the leaderboard then add it
 
 
@@ -191,23 +203,29 @@ class QuizDone : Fragment() {
     private fun getUserGameDetails() {
 
         CoroutineScope(Dispatchers.IO).launch {
-            //userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
-            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
-                .collection(Common.GAME_DETAILS_REF).document(
-                    difficulty
-                )
+            userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF).document(
+//            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
+                //.collection(Common.GAME_DETAILS_REF).document(
+                difficulty
+            )
                 //.document(difficulty)// whereEqualTo("employerBusiness", loggedInManager.employerBusiness)
                 .get()
                 .addOnSuccessListener { document: DocumentSnapshot ->
                     val item = document.toObject(GameDetails::class.java)
-                    userGameDetails = item?.copy()!!
+                    if (item != null) {
+                        userGameDetails = item
+                    }
 
                     Log.d(
                         "QuizDone",
                         "getUserGameDetails: $quizScore, ${userGameDetails.highScore}"
                     )
+
+
+                    if (userGameDetails.highScore.isNotEmpty())
+                        localHighScore = userGameDetails.highScore.toInt()
                     binding.highScore.apply {
-                        if (quizScore.toInt() > userGameDetails.highScore.toInt()) {
+                        if (quizScore.toInt() > localHighScore) {
                             isHighScore = true
                             text = resources.getString(R.string.game_score, quizScore)
                             append(" (new)")
@@ -262,11 +280,11 @@ class QuizDone : Fragment() {
         //update the last played date
         val lastPlayed = System.currentTimeMillis().toString()
         //update the location played
-        val locationPlayed = getCurrentLocation()
+        //val locationPlayed = getCurrentLocation()
         //update that this difficulty has been played
         //update the high score (will be changed if new and same if not)
         var newHighScore = ""
-        newHighScore = if (quizScore.toInt() > userGameDetails.highScore.toInt()) {
+        newHighScore = if (quizScore.toInt() > localHighScore) {
 
             quizScore
         } else
@@ -276,38 +294,48 @@ class QuizDone : Fragment() {
         //update the new list of leaderboard map that has been sorted
         CoroutineScope(Dispatchers.IO).launch {
             val orderRef =
-                //userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
-                Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
-                    .collection(Common.GAME_DETAILS_REF).document(
+                userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
+                    .document(
+//                Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
+//                    .collection(Common.GAME_DETAILS_REF).document(
                         difficulty
                     )
 
-            val updates = hashMapOf<String, Any>(
-                GAME_DETAILS_HIGH_SCORE to newHighScore,
-                GAME_DETAILS_LAST_PLAYED to lastPlayed,
-                GAME_DETAILS_LAST_SCORE to lastScore,
-                GAME_DETAILS_LAST_LOCATION_PLAYED to locationPlayed,
-                GAME_DETAILS_LAST_LEADER_BOARD_RANK to orderNumber.toString(),
-                GAME_DETAILS_HAS_PLAYED to true
-                //"actualTime" to if (deliveryManStaff) {actualPreparationTime} else orderModel.actualTime
+            val updates = GameDetails(
+                lastPlayed = lastPlayed,
+                        lastScore = lastScore,
+                        highScore = newHighScore,
+                        leaderBoardRank = orderNumber.toString(),
+                        lastLocationPlayed = "N/A",
+                        hasPlayed = true
             )
 
-            orderRef.update(updates)
-                .addOnSuccessListener {
+//            val updates = hashMapOf<String, Any>(
+//                GAME_DETAILS_HIGH_SCORE to newHighScore,
+//                GAME_DETAILS_LAST_PLAYED to lastPlayed,
+//                GAME_DETAILS_LAST_SCORE to lastScore,
+//                //GAME_DETAILS_LAST_LOCATION_PLAYED to locationPlayed,
+//                GAME_DETAILS_LAST_LEADER_BOARD_RANK to orderNumber.toString(),
+//                GAME_DETAILS_HAS_PLAYED to true
+//                //"actualTime" to if (deliveryManStaff) {actualPreparationTime} else orderModel.actualTime
+//            )
+
+            orderRef.set(updates).await()
+                //.addOnSuccessListener {
                     // Update successful
                     //requireContext().toast("Assignment successful")
-                    hideProgress()
+                  //  hideProgress()
                     updateLeaderBoard(request)
 
                     Log.d("QuizDone", "updateGameDetails: Updated")
 
-                }
-                .addOnFailureListener { e ->
-                    // Handle error
-                    hideProgress()
-                    Log.d(TAG, "updateGameDetails: ${e.toString()}")
-                    requireContext().toast(e.message.toString())
-                }
+//                }
+//                .addOnFailureListener { e ->
+//                    // Handle error
+//                    hideProgress()
+//                    Log.d(TAG, "updateGameDetails: ${e.toString()}")
+//                    requireContext().toast(e.message.toString())
+//                }
 
 
         }

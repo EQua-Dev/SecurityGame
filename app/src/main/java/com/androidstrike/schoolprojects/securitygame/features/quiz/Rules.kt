@@ -18,6 +18,7 @@ import com.androidstrike.schoolprojects.securitygame.models.Quiz
 import com.androidstrike.schoolprojects.securitygame.models.SecurityTips
 import com.androidstrike.schoolprojects.securitygame.utils.Common.FULL_DATE_FORMAT
 import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_REF
+import com.androidstrike.schoolprojects.securitygame.utils.Common.auth
 import com.androidstrike.schoolprojects.securitygame.utils.Common.quizRulesCollectionRef
 import com.androidstrike.schoolprojects.securitygame.utils.Common.userCollectionRef
 import com.androidstrike.schoolprojects.securitygame.utils.getDate
@@ -85,15 +86,17 @@ class Rules : Fragment() {
     private fun getUserGameDetails() {
 
         CoroutineScope(Dispatchers.IO).launch {
-            //userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
-            Log.d(TAG, "getUserGameDetails: $difficulty")
-            userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2").collection(GAME_DETAILS_REF)
-                .document("$difficulty")
+            userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
+//            Log.d(TAG, "getUserGameDetails: $difficulty")
+//            userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2").collection(GAME_DETAILS_REF)
+                .document(difficulty)
                 //.document(difficulty)// whereEqualTo("employerBusiness", loggedInManager.employerBusiness)
                 .get()
                 .addOnSuccessListener { document: DocumentSnapshot ->
                     val item = document.toObject(GameDetails::class.java)
-                    userGameDetails = item?.copy()!!
+                    if (item != null) {
+                        userGameDetails = item
+                    }
 
                     populateGameDetails()
 

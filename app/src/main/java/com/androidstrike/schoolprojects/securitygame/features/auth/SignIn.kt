@@ -81,7 +81,6 @@ class SignIn : Fragment() {
 
         with(binding) {
 
-            requestLocationPermissions()
 
             accountLogInCreateAccount.setOnClickListener {
                 val navToSignUp = SignInDirections.actionSignInToSignUp()
@@ -102,6 +101,7 @@ class SignIn : Fragment() {
                 binding.accountLogInBtnLogin.apply {
                     enable(email.isNotEmpty() && password.isNotEmpty())
                     setOnClickListener {
+
                         login(email, password)
                     }
                 }
@@ -155,7 +155,7 @@ class SignIn : Fragment() {
                     }
 
                     //save user login location
-                    val loginLocation = getCurrentLocation()
+                    //val loginLocation = getCurrentLocation()
 
                     val navToPhoneVerification =
                         SignInDirections.actionSignInToPhoneVerification(loggedInUser.phoneNumber)

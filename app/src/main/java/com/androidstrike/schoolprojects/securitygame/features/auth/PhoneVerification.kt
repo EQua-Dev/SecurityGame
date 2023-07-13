@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.androidstrike.schoolprojects.securitygame.R
 import com.androidstrike.schoolprojects.securitygame.databinding.FragmentPhoneVerificationBinding
 import com.androidstrike.schoolprojects.securitygame.utils.Common
 import com.androidstrike.schoolprojects.securitygame.utils.Common.auth
@@ -48,6 +47,7 @@ class PhoneVerification : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         userPhoneNumber = arg.phoneNumber
+        Log.d(TAG, "userPhoneNumber: $userPhoneNumber")
 
         val options = PhoneAuthOptions.newBuilder(Common.auth)
             .setPhoneNumber(userPhoneNumber) // Phone number to verify
@@ -57,9 +57,9 @@ class PhoneVerification : Fragment() {
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
 
-        binding.twoFaBtn.setOnClickListener {
-            verifyCode()
-        }
+//        binding.twoFaBtn.setOnClickListener {
+//            verifyCode()
+//        }
 
 
     }
@@ -75,6 +75,17 @@ class PhoneVerification : Fragment() {
             //     detect the incoming verification SMS and perform verification without
             //     user action.
             Log.d(TAG, "onVerificationCompleted:$credential")
+            binding.twoFaBtn.setOnClickListener {
+                val enteredCode = binding.phoneVerificationCode.text.toString().trim()
+                if (enteredCode == credential.smsCode){
+                    requireContext().toast("code valid")
+                    val navToHome = PhoneVerificationDirections.actionPhoneVerificationToHome2()
+                    findNavController().navigate(navToHome)
+                }
+                else{
+                    requireContext().toast("code invalid")
+                }
+            }
             //signInWithPhoneAuthCredential(credential)
         }
 
@@ -100,23 +111,30 @@ class PhoneVerification : Fragment() {
             // by combining the code with a verification ID.
             Log.d(TAG, "onCodeSent:$verificationId")
             sentCode = verificationId
+
+            verifyCode(sentCode)
+
             // Save verification ID and resending token so we can use them later
             //storedVerificationId = verificationId
             //resendToken = token
         }
     }
 
-    private fun verifyCode(){
-        val enteredCode = binding.phoneVerificationCode.text.toString().trim()
-        val credential = PhoneAuthProvider.getCredential(sentCode, enteredCode)
-        if (sentCode == enteredCode){
-            requireContext().toast("code valid")
-            val navToHome = PhoneVerificationDirections.actionPhoneVerificationToHome2()
-            findNavController().navigate(navToHome)
+    private fun verifyCode(sentCode: String) {
+        binding.twoFaBtn.setOnClickListener {
+            val enteredCode = binding.phoneVerificationCode.text.toString().trim()
+            val credential = PhoneAuthProvider.getCredential(sentCode, enteredCode)
+            Log.d(TAG, "verifyCode: ${this.sentCode} $enteredCode ${credential.smsCode}")
+            if (enteredCode == credential.smsCode){
+                requireContext().toast("code valid")
+                val navToHome = PhoneVerificationDirections.actionPhoneVerificationToHome2()
+                findNavController().navigate(navToHome)
+            }
+            else{
+                requireContext().toast("code invalid")
+            }
         }
-        else{
-            requireContext().toast("code invalid")
-        }
+
         //signInWithPhoneAuthCredential(credential)
 
     }

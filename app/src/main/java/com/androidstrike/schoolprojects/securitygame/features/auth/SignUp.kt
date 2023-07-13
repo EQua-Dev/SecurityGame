@@ -8,6 +8,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import com.androidstrike.schoolprojects.securitygame.R
 import com.androidstrike.schoolprojects.securitygame.databinding.FragmentSignUpBinding
@@ -123,19 +130,18 @@ class SignUp : Fragment() {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val newUserId = mAuth.uid
+                    val user = mAuth.currentUser
+                    user?.sendEmailVerification()
+                        ?.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                requireContext().toast(resources.getString(R.string.email_sent))
+                                launchVerifyEmailDialog()
+                            }
+                        }
                     //val dateJoined = System.currentTimeMillis().toString()
                     //saves user's details to the cloud db (fireStore)
-                    val userData = UserData(
-                        username = username,
-                        email = email,
-                        phoneNumber = formatPhoneNumber(phoneNumber),
-                        userId = newUserId.toString()
-                    )
 
-
-                    saveUser(userData)
 //                    userId = Common.mAuth.currentUser?.uid
-                    hideProgress()
                 } else {
                     it.exception?.message?.let { message ->
                         hideProgress()
@@ -147,12 +153,66 @@ class SignUp : Fragment() {
     }
 
 
+    private fun launchVerifyEmailDialog() {
+
+
+        val builder =
+            layoutInflater.inflate(R.layout.email_verification_dialog, null)
+
+        val userEmail = builder.findViewById<TextView>(R.id.email_verification_email)
+
+        val btnLinkClicked =
+            builder.findViewById<Button>(R.id.email_verification_btn)
+
+        userEmail.text = auth.currentUser?.email
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(builder)
+            .setCancelable(false)
+            .create()
+
+
+        btnLinkClicked.setOnClickListener {
+            auth.currentUser!!.reload().addOnCompleteListener { task ->
+                Log.d(TAG, "launchVerifyEmailDialog: ${auth.currentUser?.email}")
+                Log.d(TAG, "launchVerifyEmailDialog: ${auth.currentUser!!.isEmailVerified}")
+
+                if (task.isSuccessful) {
+                    if (auth.currentUser!!.isEmailVerified) {
+                        val userData = UserData(
+                            username = username,
+                            email = email,
+                            phoneNumber = formatPhoneNumber(phoneNumber),
+                            userId = auth.uid.toString()
+                        )
+                        dialog.dismiss()
+                        saveUser(userData)
+                    } else {
+                        hideProgress()
+                        requireContext().toast(resources.getString(R.string.email_not_verified))
+                    }
+                } else {
+                    requireContext().toast(task.exception.toString())
+                }
+
+            }
+
+        }
+
+
+
+        dialog.show()
+
+    }
+
 
     private fun saveUser(userData: UserData) =
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 userCollectionRef.document(userData.userId).set(userData).await()
-                sendVerificationEmail(auth.currentUser!!)
+                hideProgress()
+                val navToSignIn = SignUpDirections.actionSignUpToSignIn()
+                findNavController().navigate(navToSignIn)
+                //sendVerificationEmail(auth.currentUser!!)
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -181,16 +241,15 @@ class SignUp : Fragment() {
 
         user.sendEmailVerification()
             ?.addOnCompleteListener { task ->
-                if (task.isSuccessful){
+                if (task.isSuccessful) {
                     if (user.isEmailVerified) {
                         // User is logged in and email is verified
-                        val navToSignIn = SignUpDirections.actionSignUpToSignIn()
-                        findNavController().navigate(navToSignIn)
+
                     } else {
                         // User is not logged in or email is not verified
                         requireContext().toast("Email not verified")
                     }
-                }else{
+                } else {
                     val exception = task.exception
                     requireContext().toast(exception.toString())
                 }

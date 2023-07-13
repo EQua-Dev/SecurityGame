@@ -5,8 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.androidstrike.schoolprojects.securitygame.R
 import com.androidstrike.schoolprojects.securitygame.databinding.FragmentHomeBinding
@@ -19,6 +23,7 @@ import com.androidstrike.schoolprojects.securitygame.utils.Common.DIFFICULTY_EAS
 import com.androidstrike.schoolprojects.securitygame.utils.Common.DIFFICULTY_HARD
 import com.androidstrike.schoolprojects.securitygame.utils.Common.DIFFICULTY_MEDIUM
 import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_REF
+import com.androidstrike.schoolprojects.securitygame.utils.Common.auth
 import com.androidstrike.schoolprojects.securitygame.utils.Common.securityTipsCollectionRef
 import com.androidstrike.schoolprojects.securitygame.utils.showProgressDialog
 import com.androidstrike.schoolprojects.securitygame.utils.toast
@@ -62,20 +67,23 @@ class Home : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as AppCompatActivity).setSupportActionBar(binding.homeCustomToolBar)
 
         getUser()
 
         difficulties = resources.getStringArray(R.array.difficulties)
         for (difficulty in difficulties) {
             getUserGameDetails(difficulty)
+            Log.d(TAG, "onViewCreated: $difficulty")
         }
-
 
     }
 
@@ -130,82 +138,96 @@ class Home : Fragment() {
 
     }
 
-
     private fun getUserGameDetails(difficulty: String) {//: GameDetails {
-        showProgress()
+
+
+        Log.d(TAG, "getUserGameDetails: ")
 
 
         var loggedUser = UserData()
         CoroutineScope(Dispatchers.IO).launch {
-            //Common.userCollectionRef.whereEqualTo("userId", Common.auth.uid.toString())
-            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2").collection(
+            //showProgress()
+            Common.userCollectionRef.document(Common.auth.uid.toString()).collection(
+//            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2").collection(
                 GAME_DETAILS_REF
             ).document(difficulty)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        requireContext().toast(error.message.toString())
-                        return@addSnapshotListener
-                    }
-                    if (value != null && value.exists()) {
-                        val userGameDetails = value.toObject(GameDetails::class.java)!!
-                        when (difficulty) {
-                            DIFFICULTY_EASY -> {
+                .get()
+                .addOnSuccessListener { document: DocumentSnapshot ->
+                    Log.d(TAG, "getUserGameDetails: $document")
+                    Log.d(TAG, "getUserGameDetails: ${document?.data}")
+              //      hideProgress()
+                //}
+//                .addSnapshotListener { value, error ->
+//                    hideProgress()
+//                    if (error != null) {
+//                        requireContext().toast(error.message.toString())
+//                        return@addSnapshotListener
+//                    }
+                    when (difficulty) {
+                        DIFFICULTY_EASY -> {
+                            Log.d(TAG, "getUserGameDetails: $document")
+                            Log.d(TAG, "getUserGameDetails: ${document?.data}")
+
+                            if (document != null && document.exists()) {
+                                val userGameDetails = document.toObject(GameDetails::class.java)!!
                                 userEasyGameDetails = userGameDetails
                                 binding.easyHighScore.text = userEasyGameDetails.highScore.ifEmpty {
-                                    "N/A"
+                                    resources.getString(R.string.nil)
                                 }
-                            }
-
-                            DIFFICULTY_MEDIUM -> {
-                                userMediumGameDetails = userGameDetails
-                                binding.mediumHighScore.text =
-                                    userMediumGameDetails.highScore.ifEmpty {
-                                        "N/A"
-                                    }
-                            }
-
-                            DIFFICULTY_HARD -> {
-                                userHardGameDetails = userGameDetails
-                                binding.hardHighScore.text = userHardGameDetails.highScore.ifEmpty {
-                                    "N/A"
-                                }
+                                setCardClicks()
+                            }else{
+                                binding.easyHighScore.text = resources.getString(R.string.nil)
+                                userEasyGameDetails.hasPlayed = false
+                                setCardClicks()
                             }
                         }
-                        //getLeaderboard(loggedUser)
-                        setCardClicks()
-                        hideProgress()
-                        //onResume()
-                    }
-                }
-        }
 
-        //var userGameDetails = GameDetails()
-//        CoroutineScope(Dispatchers.IO).launch {
-//            //userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
-//            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
-//                .collection(Common.GAME_DETAILS_REF).document(
-//                DIFFICULTY_EASY
-//            )
-//                //.document(difficulty)// whereEqualTo("employerBusiness", loggedInManager.employerBusiness)
-//                .get()
-//                .addOnSuccessListener { document: DocumentSnapshot ->
-//                    val item = document.toObject(GameDetails::class.java)
-//                    userGameDetails = item?.copy()!!
-//                    Log.d(TAG, "getUserGameDetails: ${item.highScore}")
-//
-//                }
-//
-//        }
-        //return userGameDetails
+                        DIFFICULTY_MEDIUM -> {
+                            if (document.exists()) {
+                                val userGameDetails = document.toObject(GameDetails::class.java)!!
+                                userMediumGameDetails = userGameDetails
+                                binding.mediumHighScore.text = userMediumGameDetails.highScore.ifEmpty {
+                                    resources.getString(R.string.nil)
+                                }
+                                setCardClicks()
+                            }else{
+                                binding.mediumHighScore.text = resources.getString(R.string.nil)
+                                userMediumGameDetails.hasPlayed = false
+                                setCardClicks()
+                            }
+                        }
+
+                        DIFFICULTY_HARD -> {
+
+                            if (document != null && document.exists()) {
+                                val userGameDetails = document?.toObject(GameDetails::class.java)!!
+                                userHardGameDetails = userGameDetails
+                                binding.hardHighScore.text = userHardGameDetails.highScore.ifEmpty {
+                                    resources.getString(R.string.nil)
+                                }
+                                setCardClicks()
+                            }else{
+                                binding.hardHighScore.text = resources.getString(R.string.nil)
+                                userHardGameDetails.hasPlayed = false
+                                setCardClicks()
+                            }
+                        }
+                    }
+
+                }
+
+        }
 
     }
 
     private fun setCardClicks() {
+
         binding.homeCardEasy.setOnClickListener {
             val difficulty = resources.getString(R.string.easy)
             val navToRules = HomeDirections.actionHome2ToRules(difficulty)
             findNavController().navigate(navToRules)
         }
+
         binding.homeCardMedium.setOnClickListener {
             val difficulty = resources.getString(R.string.medium)
             if (userEasyGameDetails.hasPlayed) {
@@ -272,7 +294,7 @@ class Home : Fragment() {
 
                     if (!orderedLeaderBoardMap.keys.contains(username)) {
                         Log.d(TAG, "getLeaderboard: $difficulty $username not in")
-                        orderNumberString = "N/A"
+                        orderNumberString = resources.getString(R.string.nil)
                     } else {
                         for (usernames in orderedLeaderBoardMap.keys) {
                             if (usernames == username) {
@@ -286,6 +308,7 @@ class Home : Fragment() {
                     when (difficulty) {
                         DIFFICULTY_EASY -> {
                             binding.easyLeaderBoard.text = orderNumberString
+                            Log.d(TAG, "getLeaderboard: $difficulty $orderNumberString")
                         }
 
                         DIFFICULTY_MEDIUM -> {
@@ -307,8 +330,8 @@ class Home : Fragment() {
 
         var loggedUser = UserData()
         CoroutineScope(Dispatchers.IO).launch {
-            //Common.userCollectionRef.whereEqualTo("userId", Common.auth.uid.toString())
-            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
+            Common.userCollectionRef.document(Common.auth.uid.toString())
+//            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
                 .addSnapshotListener { value, error ->
                     if (error != null) {
                         requireContext().toast(error.message.toString())
@@ -320,19 +343,32 @@ class Home : Fragment() {
                             getLeaderboard(loggedUser.username, difficulty)
                     }
                 }
-//            get()
-//                .addOnSuccessListener { querySnapshot: QuerySnapshot ->
 //
-//                    for (document in querySnapshot.documents) {
-//                        val item = document.toObject(UserData::class.java)
-//                        if (item?.userId == Common.auth.uid.toString())
-//                            loggedUser = item
-//                    }
-//                    Log.d(TAG, "getUser: $loggedUser")
-//                    getLeaderboard(loggedUser)
-//                }
         }
 
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_logout -> {
+                auth.signOut()
+                val navToStart = HomeDirections.actionHome2ToSignIn()
+                findNavController().navigate(navToStart)
+            }
+
+            R.id.action_leaderboard -> {
+                val navToLeaderBoard = HomeDirections.actionHome2ToLeaderBoardFragment()
+                findNavController().navigate(navToLeaderBoard)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun showProgress() {
@@ -343,7 +379,6 @@ class Home : Fragment() {
     private fun hideProgress() {
         progressDialog?.let { if (it.isShowing) it.cancel() }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

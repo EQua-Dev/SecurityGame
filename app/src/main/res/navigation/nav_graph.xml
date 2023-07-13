@@ -72,6 +72,12 @@
         <action
             android:id="@+id/action_home2_to_rules"
             app:destination="@id/rules" />
+        <action
+            android:id="@+id/action_home2_to_leaderBoardFragment"
+            app:destination="@id/leaderBoardFragment" />
+        <action
+            android:id="@+id/action_home2_to_SignIn"
+            app:destination="@id/SignIn" />
     </fragment>
     <fragment
         android:id="@+id/rules"
@@ -123,5 +129,14 @@
         <argument
             android:name="correctAnswers"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/leaderBoardFragment"
+        android:name="com.androidstrike.schoolprojects.securitygame.features.leaderboard.LeaderBoardFragment"
+        android:label="fragment_leader_board"
+        tools:layout="@layout/fragment_leader_board" >
+        <action
+            android:id="@+id/action_leaderBoardFragment_to_rules"
+            app:destination="@id/rules" />
     </fragment>
 </navigation>
