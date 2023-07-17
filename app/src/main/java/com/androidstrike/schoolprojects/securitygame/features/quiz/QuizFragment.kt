@@ -119,6 +119,8 @@ class QuizFragment : Fragment() {
                     }
                 }
 
+                val allOptionButtons = listOf(btnOption1, btnOption2, btnOption3, btnOption4)
+
                 btnOption1.setOnClickListener {
                     countdownTimer?.cancel()
                     val option = it as Button
@@ -149,6 +151,10 @@ class QuizFragment : Fragment() {
 
                     } else {
                         btnOption1.setBackgroundColor(resources.getColor(R.color.wrong))
+                        for (btn in allOptionButtons){
+                            if (btn.text == questions[listIndex].answer)
+                                btn.setBackgroundColor(resources.getColor(R.color.correct))
+                        }
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info
@@ -194,6 +200,10 @@ class QuizFragment : Fragment() {
 
                     } else {
                         btnOption2.setBackgroundColor(resources.getColor(R.color.wrong))
+                        for (btn in allOptionButtons){
+                            if (btn.text == questions[listIndex].answer)
+                                btn.setBackgroundColor(resources.getColor(R.color.correct))
+                        }
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info
@@ -242,7 +252,10 @@ class QuizFragment : Fragment() {
 
                     } else {
                         btnOption3.setBackgroundColor(resources.getColor(R.color.wrong))
-
+                        for (btn in allOptionButtons){
+                            if (btn.text == questions[listIndex].answer)
+                                btn.setBackgroundColor(resources.getColor(R.color.correct))
+                        }
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info
@@ -289,7 +302,10 @@ class QuizFragment : Fragment() {
 
                     } else {
                         btnOption4.setBackgroundColor(resources.getColor(R.color.wrong))
-
+                        for (btn in allOptionButtons){
+                            if (btn.text == questions[listIndex].answer)
+                                btn.setBackgroundColor(resources.getColor(R.color.correct))
+                        }
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info

@@ -247,6 +247,10 @@ class Home : Fragment() {
             }
         }
 
+        binding.homeLeaderboardBtn.setOnClickListener {
+            val navToLeaderBoard = HomeDirections.actionHome2ToLeaderBoardFragment()
+            findNavController().navigate(navToLeaderBoard)
+        }
 
 
         binding.homeRandomDifficultyBtn.setOnClickListener {
@@ -361,11 +365,6 @@ class Home : Fragment() {
                 auth.signOut()
                 val navToStart = HomeDirections.actionHome2ToSignIn()
                 findNavController().navigate(navToStart)
-            }
-
-            R.id.action_leaderboard -> {
-                val navToLeaderBoard = HomeDirections.actionHome2ToLeaderBoardFragment()
-                findNavController().navigate(navToLeaderBoard)
             }
         }
         return super.onOptionsItemSelected(item)

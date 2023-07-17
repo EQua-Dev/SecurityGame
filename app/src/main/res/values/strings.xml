@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Secure Guard</string>
+    <string name="app_name">Infosec Guard</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="splash_screen_fragment_label">Splash Screen</string>
@@ -40,7 +40,7 @@
     <string name="two_fa_btn">Verify Code</string>
     <string name="action_logout">Logout</string>
     <string name="action_leaderboard">Leaderboard</string>
-    <string name="secure_guard_quiz">Secure Guard Quiz</string>
+    <string name="secure_guard_quiz">Infosec Guard Quiz</string>
     <string name="choose_difficulty">Choose Difficulty</string>
     <string name="easy">Easy</string>
     <string name="high_score">H. Score: </string>

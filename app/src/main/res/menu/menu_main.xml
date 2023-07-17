@@ -7,12 +7,6 @@
         android:id="@+id/action_logout"
         android:orderInCategory="100"
         android:title="@string/action_logout"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 
-    <item
-        android:id="@+id/action_leaderboard"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom"
-        android:title="@string/action_leaderboard"
-        android:icon="@drawable/ic_leaderboard"/>
 </menu>

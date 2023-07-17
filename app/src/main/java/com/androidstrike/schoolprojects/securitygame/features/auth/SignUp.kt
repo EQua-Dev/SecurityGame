@@ -138,14 +138,9 @@ class SignUp : Fragment() {
                                 launchVerifyEmailDialog()
                             }
                         }
-                    //val dateJoined = System.currentTimeMillis().toString()
-                    //saves user's details to the cloud db (fireStore)
-
-//                    userId = Common.mAuth.currentUser?.uid
                 } else {
                     it.exception?.message?.let { message ->
                         hideProgress()
-//                        pbLoading.visible(false)
                         requireActivity().toast(message)
                     }
                 }

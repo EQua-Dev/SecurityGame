@@ -248,7 +248,7 @@ class QuizDone : Fragment() {
         var loggedUser = UserData()
         CoroutineScope(Dispatchers.IO).launch {
             //Common.userCollectionRef.whereEqualTo("userId", Common.auth.uid.toString())
-            Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
+            Common.userCollectionRef.document(auth.uid!!)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
                         requireContext().toast(error.message.toString())
