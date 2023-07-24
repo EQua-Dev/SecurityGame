@@ -46,6 +46,8 @@ class SignUp : Fragment() {
     private lateinit var phoneNumber: String
     private lateinit var password: String
     private lateinit var confirmPassword: String
+    private lateinit var userCountryCode: String
+
 
 
     private var progressDialog: Dialog? = null
@@ -78,10 +80,17 @@ class SignUp : Fragment() {
                 }
             }
 
+            userCountryCode = countryCodePicker.defaultCountryCodeWithPlus
+            countryCodePicker.setOnCountryChangeListener {
+                userCountryCode = countryCodePicker.selectedCountryCodeWithPlus
+                // Handle selected country code and name
+                countryCodePicker.setNumberAutoFormattingEnabled(true)
+            }
+
             userRegisterBtn.setOnClickListener {
                 username = registerUserName.text.toString().trim()
                 email = registerCustomerEmail.text.toString().trim()
-                phoneNumber = registerCustomerPhone.text.toString().trim()
+                phoneNumber = "$userCountryCode${registerCustomerPhone.text.toString().trim()}"
                 password = registerCustomerPassword.text.toString().trim()
                 confirmPassword = registerCustomerConfirmPassword.text.toString().trim()
 

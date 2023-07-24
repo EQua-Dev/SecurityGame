@@ -132,6 +132,8 @@ class PhoneVerification : Fragment() {
             }
             else{
                 requireContext().toast("code invalid")
+                auth.signOut()
+                findNavController().popBackStack()
             }
         }
 

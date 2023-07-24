@@ -4,6 +4,7 @@ package com.androidstrike.schoolprojects.securitygame.features.quiz
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class QuizFragment : Fragment() {
 
@@ -34,11 +36,13 @@ class QuizFragment : Fragment() {
     private var questions: MutableList<Question> = mutableListOf()
 
     var questionIndex = 1
-    private val listIndex = questionIndex - 1
+    private  var listIndex: Int by Delegates.notNull()
     private var userScore = 0
     private var correctAnswers = 0
 
     private var countdownTimer: CountDownTimer? = null
+
+    val TAG = "QuizFragment"
 
 
 
@@ -89,12 +93,20 @@ class QuizFragment : Fragment() {
                 showFinishScreen()
             }
 
+            listIndex= questionIndex - 1
+
             if (questionIndex > questions.size) {
                 showFinishScreen()
                 requireContext().toast("Over")
 
             } else {
                 resetViews()
+
+                Log.d(TAG, "populateQuestions: $questions")
+                Log.d(TAG, "questions.size: ${questions.size}")
+                Log.d(TAG, "listIndex: $listIndex")
+                Log.d(TAG, "questionIndex: $questionIndex")
+                //Log.d(TAG, "populateQuestions: ${questions[questionIndex].question}")
 
 
                 quizQuestionNumber.text = resources.getString(
@@ -110,6 +122,8 @@ class QuizFragment : Fragment() {
                 btnOption4.text = options[3]
 
                 quizScore.text = userScore.toString()
+                Log.d(TAG, "userScore: $userScore")
+                Log.d(TAG, "correctAnswers: $correctAnswers")
                 //questionText.text = questions[listIndex].question
 
                 btnHint.setOnClickListener {
@@ -133,7 +147,9 @@ class QuizFragment : Fragment() {
                         userScore = userScore + 2
                         quizScore.text = userScore.toString()
                         requireContext().toast(resources.getString(R.string.correct))
-                        correctAnswers += 1
+                        correctAnswers = correctAnswers + 1
+                        Log.d(TAG, "option userScore: $userScore")
+                        Log.d(TAG, "option correctAnswers: $correctAnswers")
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info
@@ -181,10 +197,10 @@ class QuizFragment : Fragment() {
                     val option = it as Button
                     if (checkCorrectAnswer(option.text.toString())) {
                         btnOption2.setBackgroundColor(resources.getColor(R.color.correct))
-                        userScore += 2
+                        userScore = userScore + 2
                         quizScore.text = userScore.toString()
                         requireContext().toast(resources.getString(R.string.correct))
-                        correctAnswers += 1
+                        correctAnswers = correctAnswers + 1
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info
@@ -231,10 +247,10 @@ class QuizFragment : Fragment() {
                     val option = it as Button
                     if (checkCorrectAnswer(option.text.toString())) {
                         btnOption3.setBackgroundColor(resources.getColor(R.color.correct))
-                        userScore += 2
+                        userScore = userScore + 2
                         quizScore.text = userScore.toString()
                         requireContext().toast(resources.getString(R.string.correct))
-                        correctAnswers += 1
+                        correctAnswers = correctAnswers + 1
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info
@@ -281,10 +297,10 @@ class QuizFragment : Fragment() {
                     val option = it as Button
                     if (checkCorrectAnswer(option.text.toString())) {
                         btnOption4.setBackgroundColor(resources.getColor(R.color.correct))
-                        userScore += 2
+                        userScore = userScore + 2
                         quizScore.text = userScore.toString()
                         requireContext().toast(resources.getString(R.string.correct))
-                        correctAnswers += 1
+                        correctAnswers = correctAnswers + 1
                         infoText.apply {
                             visibility = View.VISIBLE
                             text = questions[listIndex].info
@@ -337,6 +353,10 @@ class QuizFragment : Fragment() {
     }
 
     private fun resetViews() {
+
+        Log.d(TAG, "userScore:$userScore")
+        Log.d(TAG, "correctAnswers:$correctAnswers")
+        countdownTimer?.cancel()
 
         with(binding){
             val questionTime =

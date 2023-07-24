@@ -2,6 +2,8 @@ package com.androidstrike.schoolprojects.securitygame.features.home
 
 import android.app.Dialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -122,19 +124,24 @@ class Home : Fragment() {
         securityTipsAdapter?.startListening()
         binding.securityTipsBanner.adapter = securityTipsAdapter
 
+        val handler = Handler(Looper.getMainLooper())
         slideTimer = Timer()
         slideRunnable = object : TimerTask() {
             override fun run() {
-                // Increment the current item index or reset to 0
-                val currentItem = binding.securityTipsBanner.currentItem
-                val nextItem =
-                    if (currentItem == securityTipsAdapter!!.itemCount - 1) 0 else currentItem + 1
-                binding.securityTipsBanner.setCurrentItem(nextItem, true)
+                handler.post{
+                    // Increment the current item index or reset to 0
+                    val currentItem = binding.securityTipsBanner.currentItem
+                    val nextItem =
+                        if (currentItem == securityTipsAdapter!!.itemCount - 1) 0 else currentItem + 1
+
+                    binding.securityTipsBanner.setCurrentItem(nextItem, true)
+                }
+
             }
         }
 
 // Schedule the slideRunnable to run every few seconds
-        slideTimer?.scheduleAtFixedRate(slideRunnable, 3000, 3000)
+        slideTimer?.scheduleAtFixedRate(slideRunnable, 10000, 10000)
 
     }
 
@@ -343,6 +350,7 @@ class Home : Fragment() {
                     }
                     if (value != null && value.exists()) {
                         loggedUser = value.toObject(UserData::class.java)!!
+                        binding.homeCustomToolBar.title = loggedUser.username
                         for (difficulty in difficulties)
                             getLeaderboard(loggedUser.username, difficulty)
                     }

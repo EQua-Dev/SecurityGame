@@ -87,6 +87,9 @@ dependencies {
 
     //run-time permission manager
     implementation 'com.karumi:dexter:5.0.0'
+    
+    //phone number country code picker
+    implementation 'com.hbb20:ccp:2.5.3'
 
 
 }
