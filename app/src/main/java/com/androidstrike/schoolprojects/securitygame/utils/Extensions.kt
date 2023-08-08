@@ -22,6 +22,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import android.telephony.PhoneNumberUtils
+import java.security.MessageDigest
 
 
 /**
@@ -233,5 +234,25 @@ fun isTimeWithin24hours(givenTimeInMillis: Long): Boolean{
     val isWithinDayRange = givenTimeInMillis >= startOfDayMillis && givenTimeInMillis <= endOfDayMillis
 
     return isWithinDayRange
+}
+
+
+
+fun isPasswordValid(password: String): Boolean {
+    val pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$".toRegex()
+    return !pattern.matches(password)
+}
+
+fun hashString(input: String): String {
+    val messageDigest = MessageDigest.getInstance("MD5")
+    val bytes = messageDigest.digest(input.toByteArray())
+    val stringBuilder = StringBuilder()
+
+    for (byte in bytes) {
+        // Convert each byte to a hex string
+        stringBuilder.append(String.format("%02x", byte))
+    }
+
+    return stringBuilder.toString()
 }
 

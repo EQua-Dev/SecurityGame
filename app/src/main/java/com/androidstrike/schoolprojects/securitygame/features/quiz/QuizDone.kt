@@ -1,6 +1,7 @@
 package com.androidstrike.schoolprojects.securitygame.features.quiz
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.pm.PackageManager
 import android.location.Address
@@ -12,7 +13,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.androidstrike.schoolprojects.securitygame.R
@@ -21,12 +22,6 @@ import com.androidstrike.schoolprojects.securitygame.models.GameDetails
 import com.androidstrike.schoolprojects.securitygame.models.Leaderboard
 import com.androidstrike.schoolprojects.securitygame.models.UserData
 import com.androidstrike.schoolprojects.securitygame.utils.Common
-import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_HAS_PLAYED
-import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_HIGH_SCORE
-import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_LAST_LEADER_BOARD_RANK
-import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_LAST_LOCATION_PLAYED
-import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_LAST_PLAYED
-import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_LAST_SCORE
 import com.androidstrike.schoolprojects.securitygame.utils.Common.GAME_DETAILS_REF
 import com.androidstrike.schoolprojects.securitygame.utils.Common.auth
 import com.androidstrike.schoolprojects.securitygame.utils.Common.leaderBoardCollectionRef
@@ -37,15 +32,11 @@ import com.androidstrike.schoolprojects.securitygame.utils.toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.DocumentSnapshot
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.io.IOException
 import java.util.Locale
 import kotlin.properties.Delegates
 
@@ -68,9 +59,15 @@ class QuizDone : Fragment() {
 
     private var isHighScore: Boolean = false
 
+    private val locationPermissionCode = 101
+
+    private lateinit var request: String
+
     val TAG = "QuizDone"
 
     private var orderedLeaderBoardMap: MutableMap<String, Int> = mutableMapOf()
+
+
 
 
     private var loggedInUser = UserData()
@@ -80,6 +77,9 @@ class QuizDone : Fragment() {
 
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
+    lateinit var lastPlayed: String
+    lateinit var newHighScore: String
+    lateinit var lastScore: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -119,11 +119,13 @@ class QuizDone : Fragment() {
             quizDoneRetry.enable(false)
 
             quizDoneRetry.setOnClickListener {
-                updateGameDetails("replay")
+                request = "replay"
+                updateGameDetails()
             }
 
             quizDoneBtn.setOnClickListener {
-                updateGameDetails("done")
+                request = "done"
+                updateGameDetails()
             }
         }
 
@@ -275,72 +277,46 @@ class QuizDone : Fragment() {
     }
 
 
-    private fun updateGameDetails(request: String) {
+    private fun updateGameDetails() {
         showProgress()
         //update the last played date
-        val lastPlayed = System.currentTimeMillis().toString()
+        lastPlayed = System.currentTimeMillis().toString()
         //update the location played
         //val locationPlayed = getCurrentLocation()
         //update that this difficulty has been played
         //update the high score (will be changed if new and same if not)
-        var newHighScore = ""
+
         newHighScore = if (quizScore.toInt() > localHighScore) {
 
             quizScore
         } else
             userGameDetails.highScore
         //update the score gotten
-        val lastScore = quizScore
-        //update the new list of leaderboard map that has been sorted
-        CoroutineScope(Dispatchers.IO).launch {
-            val orderRef =
-                userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
-                    .document(
-//                Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
-//                    .collection(Common.GAME_DETAILS_REF).document(
-                        difficulty
-                    )
+        lastScore = quizScore
+        //fetch the last played location
+        checkLocationPermission()
 
-            val updates = GameDetails(
-                lastPlayed = lastPlayed,
-                        lastScore = lastScore,
-                        highScore = newHighScore,
-                        leaderBoardRank = orderNumber.toString(),
-                        lastLocationPlayed = "N/A",
-                        hasPlayed = true
+
+
+    }
+
+    private fun checkLocationPermission(
+
+    ) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is granted, you can request location updates.
+            getLocation()
+        } else {
+            // Request location permission
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                locationPermissionCode
             )
-
-//            val updates = hashMapOf<String, Any>(
-//                GAME_DETAILS_HIGH_SCORE to newHighScore,
-//                GAME_DETAILS_LAST_PLAYED to lastPlayed,
-//                GAME_DETAILS_LAST_SCORE to lastScore,
-//                //GAME_DETAILS_LAST_LOCATION_PLAYED to locationPlayed,
-//                GAME_DETAILS_LAST_LEADER_BOARD_RANK to orderNumber.toString(),
-//                GAME_DETAILS_HAS_PLAYED to true
-//                //"actualTime" to if (deliveryManStaff) {actualPreparationTime} else orderModel.actualTime
-//            )
-
-            orderRef.set(updates).await()
-                //.addOnSuccessListener {
-                    // Update successful
-                    //requireContext().toast("Assignment successful")
-                  //  hideProgress()
-                    updateLeaderBoard(request)
-
-                    Log.d("QuizDone", "updateGameDetails: Updated")
-
-//                }
-//                .addOnFailureListener { e ->
-//                    // Handle error
-//                    hideProgress()
-//                    Log.d(TAG, "updateGameDetails: ${e.toString()}")
-//                    requireContext().toast(e.message.toString())
-//                }
-
-
         }
-
-
     }
 
     private fun updateLeaderBoard(request: String) {
@@ -392,82 +368,116 @@ class QuizDone : Fragment() {
 
     }
 
-    private fun getCurrentLocation(): String {
-        var currentLocation = "No Address Found!"
 
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            requestLocationPermissions()
+    // Override onRequestPermissionsResult to handle the permission request result.
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == locationPermissionCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, you can request location updates.
+                getLocation()
+            } else {
+                // Permission denied, handle this case as needed.
+                // For example, show a message to the user or disable location functionality.
+                requireContext().toast("Location permission denied. Cannot fetch location")
+            }
         }
-        mFusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
-            val location: Location? = task.result
-
-
-            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-            val list: List<Address> =
-                geocoder.getFromLocation(location!!.latitude, location.longitude, 1)!!
-
-            //mUsageLocality = "Locality\n${list[0].locality}"
-            currentLocation = list[0].subLocality// .getAddressLine(0)
-
-        }
-        return currentLocation
-
     }
 
-    private fun requestLocationPermissions() {
-        //Request permissions
-        Dexter.withActivity(requireActivity()) //Dexter makes runtime permission easier to implement
-            .withPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                    getCurrentLocation()
+    @SuppressLint("MissingPermission")
+    private fun getLocation(
+    ) {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        val geocoder: Geocoder = Geocoder(requireContext(), Locale.getDefault())
+
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                // Use the location object to get latitude and longitude.
+                val latitude = location.latitude
+                val longitude = location.longitude
+
+                var lastLocationPlayed = ""
+
+                try {
+                    val addresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+                    if (addresses != null && addresses.isNotEmpty()) {
+                        val address: Address = addresses[0]
+                        val sb = StringBuilder()
+                        for (i in 0..address.maxAddressLineIndex) {
+                            sb.append(address.getAddressLine(i)).append(" ")
+                        }
+                        lastLocationPlayed = sb.toString().trim()
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
 
-                override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                    requireContext().toast("Accept Permission")
+                //update the new list of leaderboard map that has been sorted
+                CoroutineScope(Dispatchers.IO).launch {
+                    val orderRef =
+                        userCollectionRef.document(auth.uid.toString()).collection(GAME_DETAILS_REF)
+                            .document(
+//                Common.userCollectionRef.document("ElE9dfN1rXVaJ0MD8IsJv046BnV2")
+//                    .collection(Common.GAME_DETAILS_REF).document(
+                                difficulty
+                            )
+
+                    val updates = GameDetails(
+                        lastPlayed = lastPlayed,
+                        lastScore = lastScore,
+                        highScore = newHighScore,
+                        leaderBoardRank = orderNumber.toString(),
+                        lastLocationPlayed = lastLocationPlayed,
+                        hasPlayed = true
+                    )
+
+//            val updates = hashMapOf<String, Any>(
+//                GAME_DETAILS_HIGH_SCORE to newHighScore,
+//                GAME_DETAILS_LAST_PLAYED to lastPlayed,
+//                GAME_DETAILS_LAST_SCORE to lastScore,
+//                //GAME_DETAILS_LAST_LOCATION_PLAYED to locationPlayed,
+//                GAME_DETAILS_LAST_LEADER_BOARD_RANK to orderNumber.toString(),
+//                GAME_DETAILS_HAS_PLAYED to true
+//                //"actualTime" to if (deliveryManStaff) {actualPreparationTime} else orderModel.actualTime
+//            )
+
+                    orderRef.set(updates).await()
+                    //.addOnSuccessListener {
+                    // Update successful
+                    //requireContext().toast("Assignment successful")
+                    //  hideProgress()
+                    updateLeaderBoard(request)
+
+                    Log.d("QuizDone", "updateGameDetails: Updated")
+
+//                }
+//                .addOnFailureListener { e ->
+//                    // Handle error
+//                    hideProgress()
+//                    Log.d(TAG, "updateGameDetails: ${e.toString()}")
+//                    requireContext().toast(e.message.toString())
+//                }
+
+
                 }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: com.karumi.dexter.listener.PermissionRequest?,
-                    token: PermissionToken?
-                ) {
-                    TODO("Not yet implemented")
-                }
-            }).check()
-        //Request permissions
-        Dexter.withActivity(requireActivity()) //Dexter makes runtime permission easier to implement
-            .withPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+                //navigateToLocation(latitude, longitude)
 
-                }
-
-                override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                    requireContext().toast("Accept Permission")
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: com.karumi.dexter.listener.PermissionRequest?,
-                    token: PermissionToken?
-                ) {
-                    TODO("Not yet implemented")
-                }
-            }).check()
-
+                // Now you have the current location. You can use it as needed.
+                // For example, show it on a map or send it to your server.
+            } else {
+                // Location is null, handle this case as needed.
+                // For example, show an error message or request location updates.
+            }
+        }.addOnFailureListener { exception: Exception ->
+            // Handle the failure to get the location.
+            // For example, show an error message or request location updates.
+            requireContext().toast(exception.message.toString())
+        }
     }
 
 

@@ -31,7 +31,7 @@
     <string name="username_invalid">Enter valid username</string>
     <string name="email_invalid">Enter valid email address</string>
     <string name="invalid_email">Phone number must be at least 10 digits</string>
-    <string name="invalid_password">Password must be at least 6 characters</string>
+    <string name="invalid_password">Password must contain one digit, uppercase, lowercase, special character and 8 characters</string>
     <string name="invalid_confirm_password">Password does not match</string>
     <string name="check_email">Check your email</string>
     <string name="phone_verification_title">2 FA</string>
@@ -81,6 +81,8 @@
     <string name="email_verification_subtitle">Confirm Email Verification</string>
     <string name="email_verification_btn">I Have Verified Email</string>
     <string name="email_not_verified">Please verify your email</string>
+    <string name="invalid_phone_number">Phone number must be 10 characters</string>
+    <string name="missing_fields">Fill out all fields.</string>
 
     <string-array name="difficulties">
         <item>Easy</item>

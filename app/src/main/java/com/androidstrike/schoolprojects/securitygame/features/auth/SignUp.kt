@@ -8,11 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.CheckBox
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
@@ -22,19 +18,19 @@ import com.androidstrike.schoolprojects.securitygame.models.UserData
 import com.androidstrike.schoolprojects.securitygame.utils.Common.auth
 import com.androidstrike.schoolprojects.securitygame.utils.Common.userCollectionRef
 import com.androidstrike.schoolprojects.securitygame.utils.formatPhoneNumber
+import com.androidstrike.schoolprojects.securitygame.utils.hashString
+import com.androidstrike.schoolprojects.securitygame.utils.isPasswordValid
 import com.androidstrike.schoolprojects.securitygame.utils.showProgressDialog
 import com.androidstrike.schoolprojects.securitygame.utils.toast
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.util.regex.Pattern
 
 class SignUp : Fragment() {
 
@@ -48,6 +44,12 @@ class SignUp : Fragment() {
     private lateinit var confirmPassword: String
     private lateinit var userCountryCode: String
 
+    private var usernameOkay = false
+    private var emailOkay = false
+    private var phoneNumberOkay = false
+    private var passwordOkay = false
+    private var confirmPasswordOkay = false
+    private var userCountryCodeOkay = false
 
 
     private var progressDialog: Dialog? = null
@@ -75,8 +77,60 @@ class SignUp : Fragment() {
 
             binding.registerUserName.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
-                    username = registerUserName.toString().trim()
-                    validateUserName()
+                    username = registerUserName.text.toString().trim()
+                    validateUserName(username)
+                }
+            }
+            binding.registerCustomerEmail.setOnFocusChangeListener { v, hasFocus ->
+                val emailLayout = v as TextInputEditText
+                email = emailLayout.text.toString().trim()
+                if (!hasFocus) {
+                    if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        binding.textInputLayoutRegisterCustomerEmail.error =
+                            resources.getString(R.string.email_invalid)
+                    } else {
+                        emailOkay = true
+                        binding.textInputLayoutRegisterCustomerEmail.error = null
+                    }
+                }
+            }
+            binding.registerCustomerPhone.setOnFocusChangeListener { v, hasFocus ->
+                val phoneLayout = v as TextInputEditText
+                phoneNumber = phoneLayout.text.toString().trim()
+                if (!hasFocus) {
+                    if (phoneNumber.isEmpty() || phoneNumber.length < 10) {
+                        binding.textInputLayoutRegisterCustomerPhone.error =
+                            resources.getString(R.string.invalid_phone_number)
+                    } else {
+                        phoneNumberOkay = true
+                        binding.textInputLayoutRegisterCustomerPhone.error = null
+                    }
+                }
+            }
+            binding.registerCustomerPassword.setOnFocusChangeListener { v, hasFocus ->
+                val passwordLayout = v as TextInputEditText
+                password = passwordLayout.text.toString().trim()
+                if (!hasFocus) {
+                    if (isPasswordValid(password)) {
+                        binding.textInputLayoutRegisterCustomerPassword.error =
+                            resources.getString(R.string.invalid_password)
+                    } else {
+                        passwordOkay = true
+                        binding.textInputLayoutRegisterCustomerPassword.error = null
+                    }
+                }
+            }
+            binding.registerCustomerConfirmPassword.setOnFocusChangeListener { v, hasFocus ->
+                val confirmPasswordLayout = v as TextInputEditText
+                confirmPassword = confirmPasswordLayout.text.toString().trim()
+                if (!hasFocus) {
+                    if (confirmPassword != password) {
+                        binding.textInputLayoutRegisterCustomerConfirmPassword.error =
+                            resources.getString(R.string.invalid_confirm_password)
+                    } else {
+                        confirmPasswordOkay = true
+                        binding.textInputLayoutRegisterCustomerConfirmPassword.error = null
+                    }
                 }
             }
 
@@ -88,13 +142,20 @@ class SignUp : Fragment() {
             }
 
             userRegisterBtn.setOnClickListener {
-                username = registerUserName.text.toString().trim()
-                email = registerCustomerEmail.text.toString().trim()
-                phoneNumber = "$userCountryCode${registerCustomerPhone.text.toString().trim()}"
-                password = registerCustomerPassword.text.toString().trim()
-                confirmPassword = registerCustomerConfirmPassword.text.toString().trim()
+                if (emailOkay && phoneNumberOkay && passwordOkay && confirmPasswordOkay){
+                    username = registerUserName.text.toString().trim()
+                    email = registerCustomerEmail.text.toString().trim()
+                    phoneNumber = "$userCountryCode${registerCustomerPhone.text.toString().trim()}"
+                    password = registerCustomerPassword.text.toString().trim()
+                    confirmPassword = registerCustomerConfirmPassword.text.toString().trim()
 
-                validateInput()
+                    createUser(email, password)
+                }else{
+                    requireContext().toast(resources.getString(R.string.missing_fields))
+                }
+
+
+                //validateInput()
 
             }
         }
@@ -104,25 +165,30 @@ class SignUp : Fragment() {
     private fun validateInput() {
 
         with(binding) {
-            if (username.isEmpty() || !validateUserName()) {
+            if (username.isEmpty() ){//|| validateUserName(username)) {
                 textInputLayoutRegisterUserName.error =
                     resources.getString(R.string.username_invalid)
+                return
             }
             if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 textInputLayoutRegisterCustomerEmail.error =
                     resources.getString(R.string.email_invalid)
+                return
             }
             if (phoneNumber.isEmpty()) {
                 textInputLayoutRegisterCustomerPhone.error =
                     resources.getString(R.string.invalid_email)
+                return
             }
-            if (password.isEmpty() || password.length < 6) {
+            if (!isPasswordValid(password)) {
                 textInputLayoutRegisterCustomerPassword.error =
                     resources.getString(R.string.invalid_password)
+                return
             }
             if (confirmPassword != password) {
                 textInputLayoutRegisterCustomerConfirmPassword.error =
                     resources.getString(R.string.invalid_confirm_password)
+                return
             } else {
                 createUser(email, password)
             }
@@ -184,7 +250,7 @@ class SignUp : Fragment() {
                     if (auth.currentUser!!.isEmailVerified) {
                         val userData = UserData(
                             username = username,
-                            email = email,
+                            email = hashString(email),
                             phoneNumber = formatPhoneNumber(phoneNumber),
                             userId = auth.uid.toString()
                         )
@@ -285,8 +351,8 @@ class SignUp : Fragment() {
         progressDialog?.let { if (it.isShowing) it.cancel() }
     }
 
-    private fun validateUserName(): Boolean {
-        var usernameIsAvailable = true
+    private fun validateUserName(username: String) {
+        //var usernameIsAvailable: Boolean
         showProgress()
         CoroutineScope(Dispatchers.IO).launch {
             userCollectionRef
@@ -298,13 +364,20 @@ class SignUp : Fragment() {
                         if (item?.username == username) {
                             binding.textInputLayoutRegisterUserName.error =
                                 resources.getString(R.string.user_name_exists, username)
-                            usernameIsAvailable = false
+                            usernameOkay = false
+                            //usernameIsAvailable = false
+                        }
+                        else{
+
+                            binding.textInputLayoutRegisterUserName.error =
+                                null
+                            usernameOkay = true
                         }
                     }
                     hideProgress()
                 }
         }
-        return usernameIsAvailable
+        //return usernameIsAvailable
     }
 
     override fun onDestroyView() {
